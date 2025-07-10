@@ -1,7 +1,5 @@
 # Go Micro Tool
 
-Образ с предустановленными утилитами для Go проекта.
-
 Docker image with pre-installed utilities for Go projects, particularly focused on gRPC development.
 
 ## Included Tools
@@ -19,7 +17,7 @@ Docker image with pre-installed utilities for Go projects, particularly focused 
 ## Usage
 
 ```bash
-docker pull <username>/go-micro-tool:latest
+docker pull updev/go-micro-tool:latest
 ```
 
 ## Automated Builds

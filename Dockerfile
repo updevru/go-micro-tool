@@ -9,7 +9,7 @@ RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 RUN go install github.com/yoheimuta/protolint/cmd/protoc-gen-protolint@v0.50.5
 
 ## Golangci-lint install
-RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.2.1
+RUN go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.2.1
 
 ## Gotestsum install
 RUN go install gotest.tools/gotestsum@v1.12.2
