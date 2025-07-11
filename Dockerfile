@@ -1,5 +1,11 @@
 FROM golang:1.24
 
+# Установка переменных окружения для решения проблемы с VCS
+ENV GOFLAGS="-buildvcs=false"
+ENV GO_BUILD_FLAGS="-buildvcs=false"
+ENV CGO_ENABLED=0
+
+
 ## Protoc install
 RUN apt-get update && apt install -y protobuf-compiler
 RUN go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
