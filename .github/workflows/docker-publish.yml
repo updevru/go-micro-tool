@@ -2,12 +2,39 @@ name: Docker Build and Publish
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
+    paths:
+      - '1.24/**'
+      - '1.25/**'
+      - '.github/workflows/docker-publish.yml'
 
 jobs:
-  build-and-push:
+  detect-changes:
     runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.filter.outputs.changes }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            1.24:
+              - '1.24/**'
+            1.25:
+              - '1.25/**'
+
+  build-and-push:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.versions != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ${{ fromJSON(needs.detect-changes.outputs.versions) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,21 +48,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/go-micro-tool
-          tags: |
-            type=semver,pattern={{version}}
-            type=raw,value=latest
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./${{ matrix.version }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/go-micro-tool:${{ matrix.version }}
+          cache-from: type=gha,scope=${{ matrix.version }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.version }}
