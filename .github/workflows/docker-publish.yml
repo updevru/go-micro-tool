@@ -38,9 +38,11 @@ jobs:
             gotestsum --version
             protoc --version
             for tool in protoc-gen-grpc-gateway protoc-gen-openapiv2 protoc-gen-go \
-              protoc-gen-go-grpc protoc-gen-protolint gcc; do
-              command -v "$tool"
+              protoc-gen-go-grpc protoc-gen-protolint; do
+              executable=$(command -v "$tool")
+              go version -m "$executable" | sed -n "1p; /[[:space:]]mod[[:space:]]/p"
             done
+            command -v gcc
             cd "$(mktemp -d)"
             go mod init example.com/toolchain-check
             printf "package toolchaincheck\n\nimport \"net/http\"\n\nconst Method = http.MethodGet\n" > toolchain.go
