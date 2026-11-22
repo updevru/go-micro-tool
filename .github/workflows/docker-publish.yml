@@ -34,13 +34,17 @@ jobs:
           docker run --rm go-micro-tool:pr sh -ec '
             go version
             test "$(go env GOVERSION)" = go1.27.4
-            golangci-lint version | grep -F "version 2.13.2 "
+            golangci-lint version | grep -F "version 2.15.0 "
             gotestsum --version
             protoc --version
             for tool in protoc-gen-grpc-gateway protoc-gen-openapiv2 protoc-gen-go \
               protoc-gen-go-grpc protoc-gen-protolint gcc; do
               command -v "$tool"
             done
+            cd "$(mktemp -d)"
+            go mod init example.com/toolchain-check
+            printf "package toolchaincheck\n\nimport \"net/http\"\n\nconst Method = http.MethodGet\n" > toolchain.go
+            golangci-lint run
           '
 
   detect-changes:
