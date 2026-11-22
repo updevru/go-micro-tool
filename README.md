@@ -4,7 +4,7 @@ Docker image with pre-installed utilities for Go projects, particularly focused 
 
 ## Included Tools
 
-- Go 1.24
+- Go (version depends on the image tag)
 - Protobuf compiler and related tools:
   - protoc-gen-grpc-gateway
   - protoc-gen-openapiv2
@@ -17,16 +17,12 @@ Docker image with pre-installed utilities for Go projects, particularly focused 
 ## Usage
 
 ```bash
-docker pull updev/go-micro-tool:latest
+docker pull updev/go-micro-tool:1.27.4
 ```
 
 ## Automated Builds
 
-This repository uses GitHub Actions to automatically build and publish the Docker image to Docker Hub when a new version tag is created.
-
-### GitHub Actions Workflow
-
-The workflow is triggered when a tag starting with 'v' is pushed to the repository (e.g., v1.0.0). It builds the Docker image and pushes it to Docker Hub with both the version tag and the 'latest' tag.
+GitHub Actions builds and publishes images for changed version directories after a push to `main`. The Docker Hub tag matches the directory name. Pull requests that change `1.27.4/` or the workflow build and check the Go 1.27.4 image without publishing it.
 
 ### Required GitHub Secrets
 
@@ -37,12 +33,4 @@ To use this workflow, you need to set up the following secrets in your GitHub re
 
 ### Creating a New Release
 
-To create a new release and trigger the workflow:
-
-1. Tag your commit:
-   ```bash
-   git tag v1.0.0
-   git push origin v1.0.0
-   ```
-
-2. The GitHub Action will automatically build and publish the Docker image to Docker Hub.
+For a new Go patch, add a directory named after the exact Go version and register its path in `.github/workflows/docker-publish.yml`. Use a fresh directory and tag to keep published images available for existing consumers.
